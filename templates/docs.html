@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Novatar — Documentation</title>
+  <style>
+    :root{
+      --bg:#0f1720; --panel:#0b1220; --muted:#9aa8c3; --accent:#7c5cff;
+      --mono: "SFMono-Regular",Consolas,Monaco,monospace;
+      color-scheme: dark;
+    }
+    body{font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#071425 0%, #071827 100%); color:#e6eef6; margin:0; padding:28px;}
+    .wrap{max-width:980px;margin:0 auto;}
+    header{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#3f8dff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-family:var(--mono);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 22px;color:var(--muted)}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); padding:18px; border-radius:10px; margin-bottom:16px}
+    pre{background:rgba(0,0,0,0.25); padding:12px; border-radius:8px; overflow:auto; font-family:var(--mono); font-size:13px; color:#e6eef6}
+    code{font-family:var(--mono); background:rgba(255,255,255,0.02); padding:2px 6px; border-radius:6px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:14px}
+    .muted{color:var(--muted); font-size:13px}
+    .kbd{background:#071827;border:1px solid rgba(255,255,255,0.03);padding:6px 8px;border-radius:6px;font-family:var(--mono)}
+    .example{margin-top:10px}
+    a{color:var(--accent); text-decoration:none}
+    footer{color:var(--muted); font-size:13px; margin-top:18px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">N</div>
+      <div>
+        <h1>Novatar</h1>
+        <p class="lead">Simple, flexible avatar endpoint and preview tool. Supports GitHub, Gravatar, remote URLs, emoji (Twemoji), and generated initials / placeholders.</p>
+      </div>
+    </header>
+
+    <section class="card" id="overview">
+      <h2>Overview</h2>
+      <p class="muted">Novatar provides three main Flask endpoints used together:</p>
+      <ul>
+        <li><code>/avatar/&lt;username&gt;.png</code> — canonical avatar endpoint used in production. Returns avatar PNG image or redirects to placeholder.</li>
+        <li><code>/preview.png</code> — development/design preview for generating specific avatar types with query parameters (useful for demos and UI tools).</li>
+        <li><code>/placeholder.png</code> — generates a high-quality initials/placeholder PNG dynamically (supports Roboto TTF if present).</li>
+      </ul>
+    </section>
+
+    <section class="card" id="endpoints">
+      <h2>Endpoints & Query Parameters</h2>
+
+      <h3>1. <code>/avatar/&lt;username&gt;.png</code></h3>
+      <p class="muted">Primary production endpoint. Minimal usage:</p>
+      <pre>GET /avatar/SomeName.png</pre>
+
+      <p class="muted">Behavior summary:</p>
+      <ul>
+        <li>Looks up <code>users.json</code> (in project root) to find the user entry for <code>username</code>.</li>
+        <li>Normalizes various fields into an avatar object and serves the avatar according to <code>type</code>.</li>
+        <li>If not found or fetch fails, redirects to <code>/placeholder.png</code> (optionally passing <code>?initials=</code>).</li>
+        <li>Use <code>&amp;debug=1</code> for plaintext diagnostic output (development only).</li>
+      </ul>
+
+      <h4>Supported avatar <code>type</code> values</h4>
+      <table>
+        <thead><tr><th>Type</th><th>Source field(s)</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>github</code></td><td><code>gh_username</code>, <code>github_username</code>, <code>github</code>, etc.</td><td>Fetches <code>https://github.com/&lt;username&gt;.png</code> and returns it.</td></tr>
+          <tr><td><code>url</code></td><td><code>url</code>, <code>image</code></td><td>Fetches the provided remote URL and returns raw image bytes (http/https only).</td></tr>
+          <tr><td><code>gravatar</code></td><td><code>email</code>, <code>gravatar_email</code></td><td>Uses MD5(email) to fetch Gravatar with identicon fallback.</td></tr>
+          <tr><td><code>initials</code></td><td><code>initials</code>, <code>bg</code>, <code>fg</code></td><td>Creates a text-image using Roboto (if available) or fallback font.</td></tr>
+        </tbody>
+      </table>
+
+      <p class="muted">Examples:</p>
+      <div class="example">
+        <pre>
+# GitHub:
+GET /avatar/octocat.png
+
+# With debug:
+GET /avatar/octocat.png?debug=1
+        </pre>
+      </div>
+
+      <h3>2. <code>/preview.png</code></h3>
+      <p class="muted">Quick examples to preview avatar types:</p>
+      <table>
+        <tbody>
+          <tr><td class="kbd">Initials</td><td><code>/preview.png?type=initials&amp;initials=JD&amp;bg=%237c5cff&amp;fg=%23ffffff&amp;size=512</code></td></tr>
+          <tr><td class="kbd">Gravatar</td><td><code>/preview.png?type=gravatar&amp;email=me@example.com&amp;size=512</code></td></tr>
+          <tr><td class="kbd">GitHub</td><td><code>/preview.png?type=github&amp;gh=octocat</code></td></tr>
+          <tr><td class="kbd">Remote URL</td><td><code>/preview.png?type=url&amp;u=https://example.com/avatar.png</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>3. <code>/placeholder.png</code></h3>
+      <p class="muted">Generates a plain placeholder image. Parameters:</p>
+      <pre>?initials=AB&amp;size=512&amp;bg=%23182026&amp;fg=%239FB0FF</pre>
+
+      <p class="muted">Typical use: <code>/placeholder.png?initials=JD</code> returns a PNG you can use as fallback.</p>
+    </section>
+
+    <section class="card" id="users-json">
+      <h2>users.json — supported shapes</h2>
+      <p class="muted">Novatar's lookup is intentionally flexible: it accepts either an associative map or an array of objects. It inspects many possible keys. Examples below.</p>
+
+      <h3>1) Associative map (fast lookup)</h3>
+      <pre>
+{
+  "jdoe": {
+    "username": "jdoe",
+    "avatar": {
+      "type": "initials",
+      "initials": "JD",
+      "bg": "#2f855a",
+      "fg": "#ffffff"
+    }
+  },
+  "octocat": {
+    "github_username": "octocat"
+  }
+}
+      </pre>
+
+      <h3>2) Array of objects (legacy / mixed shapes)</h3>
+      <pre>
+[
+  {
+    "username": "alice",
+    "email": "alice@example.com",
+    "avatar": {"type":"gravatar"}
+  },
+  {
+    "user": {
+      "username": "bob",
+      "avatar_url": "https://cdn.example.com/bob.png"
+    }
+  },
+  {
+    "username_lower": "carol",
+    "emoji_char": "🦊",
+    "bg_color": "#ff9f43"
+  }
+]
+      </pre>
+
+      <p class="muted">Lookup rules (summary):</p>
+      <ul>
+        <li>Case-insensitive match against keys (for associative map) and against <code>username</code>, <code>username_lower</code>, <code>user.username</code>, and other common keys in array entries.</li>
+        <li>When found, Novatar canonicalizes fields into an avatar object with keys like <code>type</code>, <code>url</code>, <code>gh_username</code>, <code>email</code>, <code>emoji_char</code>, <code>initials</code>.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="implementation-notes">
+      <h2>Implementation notes & behavior</h2>
+      <ul>
+        <li><strong>HTTP fetch helper</strong>: a small <code>curl_fetch_bytes()</code> wrapper handles timeouts, redirects, and returns <code>None</code> on non-2xx or empty responses.</li>
+        <li><strong>Emoji support</strong>: (planned) converts emoji characters into Twemoji codepoints and fetches Twemoji PNGs then composites them centered on the desired background.</li>
+        <li><strong>Fonts</strong>: Roboto TTF is used if present in the project root (<code>Roboto-Regular.ttf</code>) for crisp initials/placeholder rendering. If missing, code falls back to default font.</li>
+        <li><strong>Image output</strong>: avatar endpoints stream binary image bytes with appropriate <code>Content-Type</code>. The preview endpoint may redirect directly to GitHub PNGs for convenience.</li>
+        <li><strong>Debugging</strong>: append <code>&amp;debug=1</code> to <code>/avatar/&lt;username&gt;.png</code> to get plaintext diagnostics. Do not use debug mode in production.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="security-caching">
+      <h2>Security, caching & best practices</h2>
+      <ul>
+        <li>Sanitize and validate any user-controlled input server-side. Novatar includes simple checks for missing or invalid values but you should place it behind your access controls as needed.</li>
+        <li>When proxying remote images (<code>type=url</code>), consider:
+          <ul>
+            <li>Enforcing allowlists for external hosts or validating MIME type returned by <code>curl_fetch_bytes()</code>.</li>
+            <li>Setting appropriate caching headers (e.g. <code>Cache-Control</code>) to avoid repeated large downloads.</li>
+          </ul>
+        </li>
+        <li>Avoid exposing <code>users.json</code> publicly if it contains sensitive fields. Place it where the webserver cannot serve it directly or use server rules to block access.</li>
+        <li>Do not enable <code>debug=1</code> on public endpoints (it prints internal state and JSON snippets).</li>
+      </ul>
+    </section>
+
+    <section class="card" id="examples">
+      <h2>Examples (curl)</h2>
+      <pre>
+# Get avatar PNG for "alice" (returns PNG bytes)
+curl -v "https://novatar.novadev.vip/avatar/alice.png" -o alice.png
+
+# Preview initials (512x512)
+curl "https://novatar.novadev.vip/preview.png?type=initials&initials=JD&size=512" -o jd.png
+
+# Preview gravatar
+curl "https://novatar.novadev.vip/preview.png?type=gravatar&email=me@example.com&size=512" -o gravatar.png
+
+# Debug output (plaintext diagnostics)
+curl "https://your.domain/avatar/unknown.png?debug=1"
+      </pre>
+    </section>
+
+    <section class="card" id="troubleshooting">
+      <h2>Troubleshooting</h2>
+      <ul>
+        <li><strong>Nothing returns / white page</strong>: check Flask error logs and confirm debug mode is enabled during development.</li>
+        <li><strong>Roboto letters are garbled or missing</strong>: ensure <code>Roboto-Regular.ttf</code> exists and is readable by the Flask app process.</li>
+        <li><strong>Remote fetch failing</strong>: check outbound network access, DNS resolution, and timeouts. Increase timeout in <code>curl_fetch_bytes()</code> if needed.</li>
+        <li><strong>Emoji not rendering</strong>: confirm Twemoji CDN is reachable; the code falls back to drawing raw characters if Twemoji fetch fails (feature planned).</li>
+        <li><strong>users.json not found</strong>: avatar endpoint redirects to placeholder; ensure the file exists and contains valid JSON.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="deploy">
+      <h2>Deployment tips</h2>
+      <ul>
+        <li>Place all source files and <code>users.json</code> in a directory on your Flask-capable server.</li>
+        <li>Permissions: <code>users.json</code> should be readable by the webserver user. Font file if present must be readable too.</li>
+        <li>Use server-level caching (CDN) for avatar endpoints to reduce backend load. Responses are static images so they cache well.</li>
+        <li>If you expect high volume, consider pre-fetching / storing remote avatars locally and serving from your CDN.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="notes">
+      <h2>Notes & credits</h2>
+      <p class="muted">This documentation was adapted from the original PHP-based Novatar files to reflect the Flask implementation: Roboto usage, GitHub avatar redirects, Gravatar fallback, and flexible <code>users.json</code> shapes.</p>
+      <p class="muted">Feel free to edit this file to match your domain, desired caching headers, or additional avatar sources (e.g., Twitter, custom S3 buckets).</p>
+    </section>
+
+    <footer>
+      <div>Novatar — lightweight avatar proxy & generator · Generated documentation</div>
+    </footer>
+  </div>
+</body>
+</html>

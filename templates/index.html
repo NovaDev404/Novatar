@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Novatar — One Avatar, Everywhere</title>
+  <style>
+    :root{--accent:#7c5cff;--muted:#7b7b7b}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:linear-gradient(180deg,#0f1724,#071022);color:#e9eef8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .card{width:980px;max-width:95%;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border-radius:14px;padding:28px;box-shadow:0 6px 30px rgba(2,6,23,0.6);display:flex;gap:24px;align-items:center}
+    .left{flex:1}
+    h1{margin:0 0 6px 0;font-size:28px}
+    p{margin:6px 0 18px;color:var(--muted)}
+    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:var(--accent);color:white;text-decoration:none;font-weight:600;margin-right:10px}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    .preview{width:140px;height:140px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#111827,#0b1220);overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:12px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="left">
+      <h1>Novatar</h1>
+      <p class="small">One Avatar, Everywhere — set a single profile picture and use it across platforms. Fast, simple, and universal.</p>
+
+      <a class="btn" href="signup.html">Create account</a>
+      <a class="btn ghost" href="login.html">Log in</a>
+
+      <footer>
+        Tip: Use GitHub, Gravatar, a direct image URL, or custom initials avatar. Live preview included. ✨
+      </footer>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div class="preview">
+        <img src="/avatar/Novatar.png" alt="preview" style="width:100%;height:100%;object-fit:cover">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

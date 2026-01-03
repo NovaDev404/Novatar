@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Novatar — Login</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#071022;color:#eaf0ff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+    .card{width:420px;padding:20px;border-radius:12px;background:linear-gradient(180deg,#081426,#04101a);box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+    input{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#071a2a;color:#eaf0ff}
+    .btn{margin-top:12px;padding:10px;border-radius:8px;background:#7c5cff;border:none;color:white;width:100%}
+    .link{display:block;margin-top:8px;color:#9fb0ff;text-align:center}
+    .error{color:#ff9b9b;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="margin:0">Welcome back</h2>
+    <div class="muted" style="color:#9aa3c3;font-size:13px;margin-top:6px">Log in to manage your Novatar</div>
+
+    <label style="margin-top:12px">Username</label>
+    <input id="username" placeholder="your-username">
+
+    <label>Password</label>
+    <input id="password" type="password" placeholder="password">
+
+    <button class="btn" id="loginBtn">Log in</button>
+    <a class="link" href="signup.html">Create an account</a>
+    <div class="error" id="err"></div>
+  </div>
+
+<script>
+const loginBtn=document.getElementById('loginBtn');
+const err=document.getElementById('err');
+
+loginBtn.onclick=async ()=>{ 
+  err.textContent='';
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value.trim();
+  if(!username||!password){ err.textContent='Username & password required'; return; }
+  loginBtn.disabled=true; loginBtn.textContent='Checking...';
+  try {
+    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const j=await res.json();
+    if(j.success) window.location='/dashboard.html';
+    else err.textContent=j.error||'Login failed';
+  } catch(e){ err.textContent='Network error'; }
+  loginBtn.disabled=false; loginBtn.textContent='Log in';
+}
+</script>
+</body>
+</html>

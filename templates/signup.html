@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Novatar — Sign up</title>
+  <style>
+    :root{--accent:#7c5cff;--muted:#8a8fa8}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#071022;color:#eaf0ff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+    .box{width:900px;max-width:96%;background:linear-gradient(180deg,#081426,#04101a);padding:22px;border-radius:12px;display:grid;grid-template-columns:1fr 360px;gap:18px;box-shadow:0 6px 40px rgba(0,0,0,0.6)}
+    h2{margin:0 0 8px 0}
+    label{display:block;margin:10px 0 6px;font-size:13px;color:var(--muted)}
+    input, select, button, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:#071a2a;color:#eaf0ff}
+    input[type="color"]{height:44px;padding:4px;cursor:pointer}
+    .muted{color:var(--muted);font-size:13px;margin-top:6px}
+    .row{display:flex;gap:10px}
+    .btn{background:var(--accent);color:#fff;border:none;padding:10px;border-radius:8px;cursor:pointer}
+    .note{font-size:13px;color:#9aa3c3;margin-top:10px}
+    .error{color:#ff8a8a;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div>
+      <h2>Create a Novatar account</h2>
+      <div class="muted">Usernames allow A–Z a–z 0–9 _ and - (case-insensitive uniqueness)</div>
+
+      <label>Username</label>
+      <input id="username" maxlength="32" placeholder="your-username">
+
+      <label>Password</label>
+      <input id="password" type="password" placeholder="pick a safe one">
+
+      <div class="note" style="margin-top:12px">
+        You can't set an avatar during signup — sign up first, then customise your avatar in the dashboard. ✨
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" id="createBtn">Create account</button>
+        <a href="index.html" style="align-self:center;color:#9fb0ff;text-decoration:none">Back</a>
+      </div>
+
+      <div class="error" id="error"></div>
+      <div class="note">After creating your account you can use <code>/avatar/YOURNAME.png</code> to serve your Novatar avatar everywhere — once you've set one in the dashboard.</div>
+    </div>
+  </div>
+
+<script>
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const createBtn = document.getElementById('createBtn');
+const errorBox = document.getElementById('error');
+
+createBtn.onclick = async () => {
+  errorBox.textContent = '';
+  const username = (usernameInput.value || '').trim();
+  const password = (passwordInput.value || '').trim();
+
+  if (!username || !password) { errorBox.textContent = 'Username & password required'; return; }
+  if (!/^[A-Za-z0-9_-]+$/.test(username)) { errorBox.textContent = 'Invalid username — only A-Z a-z 0-9 - _ allowed'; return; }
+
+  const payload = { username, password };
+
+  createBtn.disabled = true;
+  createBtn.textContent = 'Creating...';
+
+  try {
+    const res = await fetch('/api/signup', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    });
+    const j = await res.json();
+    if (j.success) {
+      window.location = '/dashboard.html';
+    } else {
+      errorBox.textContent = j.error || 'Unknown error';
+    }
+  } catch(e) {
+    errorBox.textContent = 'Network error';
+  } finally {
+    createBtn.disabled = false;
+    createBtn.textContent = 'Create account';
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+[
+    {
+        "username": "NovaDev404",
+        "username_lower": "novadev404",
+        "password_hash": "$2b$12$JIaqhkwsFyLc7Ihe8bQPCOzfOvrq2LK6TpVzeix62AXVDllecInIS",
+        "avatar": {
+            "type": "github",
+            "gh_username": "NovaDev404"
+        },
+        "created_at": 1767226792
+    },
+    {
+        "username": "Novatar",
+        "username_lower": "novatar",
+        "password_hash": "$2b$12$k0KmZpAVhHllfWcyXdj6r.qee/WfPGOVwREHVjXKkVD.GvblGyqW6",
+        "avatar": {
+            "type": "initials",
+            "initials": "N",
+            "bg": "#0062ff",
+            "fg": "#00fffb"
+        },
+        "created_at": 1767237448
+    },
+    {
+        "username": "SuperGamer474",
+        "username_lower": "supergamer474",
+        "password_hash": "$2b$12$jLLeMgmyApoTXZGE7SrbXejj8SWsNl8T/YC5JRp4DqsUpF3dIffhm",
+        "avatar": {
+            "type": "url",
+            "url": "https://raw.githubusercontent.com/NovaDev404/icons/refs/heads/main/old_profile.png"
+        },
+        "created_at": 1767240459
+    },
+    {
+        "username": "gah",
+        "username_lower": "gah",
+        "password_hash": "$2b$12$qvx0EF7sT1aq.m7XcHyEyuuFhDsIvTjVuwDJuAN3EIkD5FTEhDieq",
+        "avatar": {
+            "type": "initials",
+            "initials": "EE",
+            "bg": "#ff0000",
+            "fg": "#000000"
+        },
+        "created_at": 1767335873
+    }
+]
